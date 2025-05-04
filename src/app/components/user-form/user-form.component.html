@@ -1,34 +1,93 @@
-<!-- src/app/components/user-form/user-form.component.html -->
+<!--
+  Fixes and improvements made to the user form:
+  - Replaced (onClick)="onSave()" with proper Angular (ngSubmit)="onSave()" for form submission(user can use "enter" key to submit)
+  - Added loading overlay with spinner to indicate processing state
+  - Added a speak button for pronunciation
+  - Implemented dynamic skills input with autocomplete suggestions and chip-style display
+  - Improved UX for the save button: disabled when invalid, shows "Saving..." when submitting
+  - Removed unused hidden time input field
+  - FIX: Prevent showing validation errors before backend data is loaded by adding !loading condition
+-->
 
 <div class="user-form">
-    <form [formGroup]="userForm">
-      <div class="form-field">
-        <label for="first_name">First Name:</label>
-        <input type="text" id="first_name" formControlName="first_name">
-        <span class="error" *ngIf="userForm.get('first_name')?.errors">{{ getErrorMessage('first_name') }}</span>
-      </div>
-      <div class="form-field">
-        <label for="last_name">Last Name:</label>
-        <input type="text" id="last_name" formControlName="last_name">
-        <span class="error" *ngIf="userForm.get('last_name')?.errors">{{ getErrorMessage('last_name') }}</span>
-      </div>
-      <div class="form-field">
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+  <form [formGroup]="userForm" (ngSubmit)="onSave()">
+    <div class="global-error" *ngIf="error">{{ error }}</div>
+    <div class="form-field">
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" formControlName="first_name">
+      <span class="error" *ngIf="userForm.get('first_name')?.errors && !loading">{{ getErrorMessage('first_name') }}</span>
+    </div>
+    <div class="form-field">
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" formControlName="last_name">
+      <span class="error" *ngIf="userForm.get('last_name')?.errors && !loading">{{ getErrorMessage('last_name') }}</span>
+    </div>
+    <div class="form-field">
+      <div class="label-with-button">
         <label for="full_name">Full Name:</label>
-        <input type="text" id="full_name" formControlName="full_name" [disabled]="true">
+        <button type="button" 
+                id="speak-name-button" 
+                (click)="speakFullName()" 
+                class="speak-button"
+                title="Listen to full name">
+          🔊
+        </button>
       </div>
-      <div class="form-field">
-        <label for="age">Age:</label>
-        <input type="number" id="age" formControlName="age">
-        <span class="error" *ngIf="userForm.get('age')?.errors">{{ getErrorMessage('age') }}</span>
+      <input type="text" id="full_name" formControlName="full_name">
+    </div>
+    <div class="form-field skills-section">
+      <label>Skills:</label>
+      <div class="skills-list">
+        <div class="skill-chip" *ngFor="let skill of userForm.get('skills')?.value">
+          {{ skill }}
+          <button type="button" class="remove-skill" (click)="removeSkill(skill)">
+            ×
+          </button>
+        </div>
       </div>
-      <div class="form-field">
-        <label for="email">Email:</label>
-        <input type="email" id="email" formControlName="email">
-        <span class="error" *ngIf="userForm.get('email')?.errors">{{ getErrorMessage('email') }}</span>
+
+      <div class="add-skill-container">
+        <button type="button" 
+                *ngIf="!isAddingSkill"
+                (click)="startAddingSkill()"
+                class="add-skill-button">
+          Add Skill
+        </button>
+
+        <div *ngIf="isAddingSkill" class="skill-input-wrapper">
+          <input [formControl]="skillInputControl"
+                 type="text"
+                 class="skill-input"
+                 autofocus
+                 placeholder="Type to search skills(ex: Python)">
+          
+          <div class="suggestions-list" *ngIf="filteredSkills.length > 0">
+            <div *ngFor="let skill of filteredSkills; let i = index"
+                 class="suggestion-item"
+                 (click)="selectSkill(skill)">
+              {{ skill }}
+            </div>
+          </div>
+        </div>
       </div>
-      <input type="hidden" id="time" formControlName="time">
-      <div class="form-buttons">
-        <button type="submit" (onClick)="onSave()" [disabled]="!userForm.valid">Save</button>
-      </div>
-    </form>
+      <span class="error" *ngIf="userForm.get('skills')?.errors && !loading">{{ getErrorMessage('skills') }}</span>
+    </div>
+
+    <div class="form-field">
+      <label for="age">Age:</label>
+      <input type="number" id="age" formControlName="age">
+      <span class="error" *ngIf="userForm.get('age')?.errors && !loading">{{ getErrorMessage('age') }}</span>
+    </div>
+    <div class="form-field">
+      <label for="email">Email:</label>
+      <input type="email" id="email" formControlName="email">
+      <span class="error" *ngIf="userForm.get('email')?.errors && !loading">{{ getErrorMessage('email') }}</span>
+    </div>
+    <div class="form-buttons">
+      <button type="submit" [disabled]="!userForm.valid || submitting">{{ submitting ? 'Saving...' : 'Save' }}</button>
+    </div>
+  </form>
 </div>

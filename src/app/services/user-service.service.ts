@@ -16,7 +16,8 @@ export class UserService {
         map(user => {
           return {
             ...user,
-            full_name: null
+            // Fix 6: By modifying full_name in the service, it simplifies component logic, ensures consistency across the application
+            full_name: `${user.first_name} ${user.last_name}`
           }
         })
       )
