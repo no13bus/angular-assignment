@@ -11,7 +11,8 @@ Please check the code comments in the following files for detailed modifications
 - Form validation and error handling optimization
 - Name auto-update: `full_name` updates automatically with changes to `first_name` and `last_name`
 - Skills management: Supports skill search, autocomplete, add/remove functionality
-- New feature: Name pronunciation button (for international communication)
+- New feature: Name pronunciation button (for international communication and interview convenience)
+  - I added a feature to pronounce the user's full name using SpeechSynthesisUtterance, as my name can sometimes be difficult to pronounce, especially during interviews.
 - Toast notifications: Provides user feedback for form actions and errors
 
 ## Known Issue
