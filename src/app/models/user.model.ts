@@ -9,5 +9,6 @@ export interface UserBackend {
   
   export interface User extends UserBackend {
     full_name: string;
+    skills: string[]
   }
   
