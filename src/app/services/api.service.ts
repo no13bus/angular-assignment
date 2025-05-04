@@ -1,4 +1,4 @@
-/* 
+/*
 IMPORTANT: THIS FILE DOES NOT CONTAIN ANY ISSUE TO BE SOLVED.
 IMPORTANT: THIS FILE DOES NOT CONTAIN ANY ISSUE TO BE SOLVED.
 IMPORTANT: THIS FILE DOES NOT CONTAIN ANY ISSUE TO BE SOLVED.
@@ -30,7 +30,8 @@ export class ApiService {
         first_name: 'John',
         last_name: 'Doe',
         age: 30,
-        email: 'john.doe@example.com'
+        email: 'john.doe@example.com',
+        skills: []
       }
       localStorage.setItem(this.storageKey, JSON.stringify(initialData))
     }
@@ -53,7 +54,8 @@ export class ApiService {
       first_name: data.first_name,
       last_name: data.last_name,
       age: data.age,
-      email: data.email
+      email: data.email,
+      skills: data.skills || []
     }
     localStorage.setItem(this.storageKey, JSON.stringify(userData))
     return of(userData).pipe(delay(1000))

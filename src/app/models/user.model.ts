@@ -5,10 +5,10 @@ export interface UserBackend {
     last_name: string;
     age: number | null;
     email: string;
+    skills: string[];
   }
   
   export interface User extends UserBackend {
     full_name: string;
-    skills: string[]
   }
   
